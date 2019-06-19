@@ -50,6 +50,3 @@ def database_queries():
     queries = [query1, query2, query4, query4]
 
     return queries
-
-    
-read_database()

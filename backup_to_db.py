@@ -54,4 +54,3 @@ def excel_to_database():
 
     print("Successfully rolled_back database!")
 
-excel_to_database()
