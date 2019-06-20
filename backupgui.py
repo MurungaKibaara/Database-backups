@@ -9,8 +9,8 @@ import threading
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 import logging
-from backup_to_db import excel_to_database
-from write_to_backup import read_database
+from create_dump import backup
+from post_dump import restore
 
 # Initialize Logging
 logging.basicConfig(filename='app.log', level=logging.DEBUG)
@@ -78,7 +78,7 @@ class StartPage(tk.Frame):
         def run_backup():
             '''Run backup in the background'''
             try:
-                threading.Thread(target=read_database, daemon=True)
+                threading.Thread(target=backup, daemon=True)
             except:
                 print("Threading failed")
 
@@ -88,13 +88,13 @@ class StartPage(tk.Frame):
             '''Set an interval to keep checking if ports are open and restart if closed'''
             threading.Thread()
             scheduler = BackgroundScheduler()
-            scheduler.add_job(read_database, IntervalTrigger(seconds=120))
+            scheduler.add_job(backup, IntervalTrigger(seconds=120))
             scheduler.start()
 
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))
         backup_button.pack()
 
-        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: controller.show_frame("PageThree")),(lambda: wait()) ,(lambda: excel_to_database())))
+        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: controller.show_frame("PageThree")),(lambda: wait()) ,(lambda: restore())))
         Restore_button.pack()
 
 class PageOne(tk.Frame):
