@@ -19,7 +19,7 @@ def excel_to_database():
     tables = []
 
     xls = pd.ExcelFile('backup.xlsx')
-    sheets = ['users1', 'users2', 'users3', 'users4']
+    sheets = ['tb_cars', 'tb_status', 'tpl_cars']
 
     for sheet in sheets:
         excel = pd.read_excel(xls, sheet, index_col=None)
@@ -38,15 +38,14 @@ def excel_to_database():
         dataframes.append(dataframe)
 
     frames = {
-        'users1': dataframes[0],
-        'users2': dataframes[1],
-        'users3': dataframes[2],
-        'users4': dataframes[3]
+        'tb_cars': dataframes[0],
+        'tb_status': dataframes[1],
+        'tpl_cars': dataframes[2]
     }
     for table, dataframe in frames.items():
 
         try:
-            database_connection = sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.format('root', '', '127.0.0.1:3306', 'backuptrial'))
+            database_connection = sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.format('root', '', '127.0.0.1:3306', 'prac4'))
             dataframe.to_sql(con=database_connection, name=table, if_exists='replace', index=False)
             
         except Error as error:

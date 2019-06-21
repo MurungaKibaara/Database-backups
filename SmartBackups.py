@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import font as tkfont
+from tkinter import filedialog
 from PIL import Image, ImageTk
 import time
 from time import sleep
@@ -58,9 +59,22 @@ class StartPage(tk.Frame):
 
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = Label(self, text="Select the host and the server",
+        label = Label(self, text="Would you like to backup or restore?",
                       font=controller.title_font)
         label.pack(side="top", fill="x", padx="50", pady=50)
+
+        global folder_path
+
+        def browse_button():
+            global folder_path
+            folder_path = filedialog.askopenfilename(initialdir = "/home/murunga/Desktop/Database-backups",title = "Select file",filetypes = (("SQL files","*.sql"),("all files","*.*")))
+            return folder_path
+
+        folder_path = StringVar()
+        print(folder_path)
+        print(folder_path)
+        variable_folder = Label(self, textvariable=folder_path, font=controller.title_font)
+        variable_folder.pack()
 
 
         def combine_functions(*functions):
@@ -94,7 +108,7 @@ class StartPage(tk.Frame):
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))
         backup_button.pack()
 
-        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: controller.show_frame("PageThree")),(lambda: wait()) ,(lambda: restore())))
+        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: browse_button()), (lambda: controller.show_frame("PageThree")) ,(lambda: restore(str(folder_path)))))
         Restore_button.pack()
 
 class PageOne(tk.Frame):

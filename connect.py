@@ -6,7 +6,7 @@ def connect():
     '''Connect to database'''
     try:
         connection = mysql.connector.connect(host='127.0.0.1', user='root',
-                                            password='', database='backuptrial')
+                                            password='', database='tracking')
         if connection.is_connected():
             db_info = connection.get_server_info()
 

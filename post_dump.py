@@ -1,8 +1,9 @@
 import mysql.connector
 from mysql.connector import Error
 
-def restore():
+def restore(filename):
     '''Restore database from backup'''
+    sql_query=str(filename)
 
     connection = mysql.connector.connect(user='root', password='',host='127.0.0.1',database='prac4')
     cur = connection.cursor()
@@ -10,9 +11,8 @@ def restore():
 
 
     try:
-        sql_file = open('backup.sql')
+        sql_file = open(sql_query)
         sql = sql_file.read()
-
 
         for result in cur.execute(sql, multi=True):
             print(result)

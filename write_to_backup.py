@@ -18,13 +18,12 @@ def read_database():
                 data = pd.read_sql_query(query, connection)
                 data_list.append(data)
 
-            writer = pd.ExcelWriter('backup.xlsx', engine='xlsxwriter')
+            writer = pd.ExcelWriter('particular_tables.xlsx', engine='xlsxwriter')
 
             frames = {
-                'users1': data_list[0],
-                'users2': data_list[1],
-                'users3': data_list[2],
-                'users4': data_list[3]
+                'tb_cars': data_list[0],
+                'tb_status': data_list[1],
+                'tpl_cars': data_list[2]
                 }
 
             for sheet, frame in  frames.items(): 
@@ -42,11 +41,10 @@ def read_database():
 
 def database_queries():
 
-    query1 = """SELECT * FROM users1;"""
-    query2 = """SELECT * FROM users2;"""
-    query3 = """SELECT * FROM users3;"""
-    query4 = """SELECT * FROM users4;"""
+    query1 = """SELECT * FROM tb_cars;"""
+    query2 = """SELECT * FROM tb_status;"""
+    query3 = """SELECT * FROM tpl_cars;"""
 
-    queries = [query1, query2, query4, query4]
+    queries = [query1, query2, query3]
 
     return queries
