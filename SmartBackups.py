@@ -150,7 +150,14 @@ class PageThree(tk.Frame):
         self.controller = controller
         label = Label(self, text="Successfully rolled back database\n\n",
                       font=controller.title_font)
-        label.pack(side="top", fill="x", padx="50", pady=50)
+        label.pack(side="top", fill="x", padx="10", pady=10)
+
+        img = Image.open("server.gif")
+        img = img.resize((200, 150), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(img)
+        panel = Label(self, image=img)
+        panel.image = img
+        panel.pack()
 
         button = Button(self, text="Continue backing up data",
                         command=lambda: controller.show_frame("PageOne")).pack()
