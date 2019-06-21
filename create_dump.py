@@ -1,5 +1,10 @@
 import pexpect
 import sys
+# import os
+
+# Change environment variable to powershell on windows
+
+# os.environ['COMSPEC'] = 'powershell'
 
 def backup():
 	'''Backup to a *.sql file'''
