@@ -51,7 +51,6 @@ class SmartBackup(tk.Tk):
         frame = self.frames[page_name]
         frame.tkraise()
 
-
 class StartPage(tk.Frame):
     '''Select option to backop or restore'''
 
@@ -88,11 +87,11 @@ class StartPage(tk.Frame):
 
         def wait():
             '''Wait for a few seconds'''
-            time.sleep(2)
+            time.sleep(1)
         def run_backup():
             '''Run backup in the background'''
             try:
-                threading.Thread(target=backup, daemon=True)
+                threading.Thread(target=backup, daemon=True).start()
             except:
                 print("Threading failed")
 
@@ -100,9 +99,9 @@ class StartPage(tk.Frame):
         # Scheduling function
         def schedule():
             '''Set an interval to keep checking if ports are open and restart if closed'''
-            threading.Thread()
+            # threading.Thread(target=run_backup, daemon=True)
             scheduler = BackgroundScheduler()
-            scheduler.add_job(backup, IntervalTrigger(seconds=120))
+            scheduler.add_job(run_backup, IntervalTrigger(seconds=120))
             scheduler.start()
 
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))

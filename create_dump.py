@@ -1,11 +1,16 @@
 import pexpect
 import sys
 import os
+from subprocess import PIPE, call, Popen
+import subprocess
 from datetime import datetime
 
 # Change environment variable to powershell on windows
 
-# os.environ['COMSPEC'] = 'powershell'
+os.environ['COMSPEC'] = 'powershell'
+password = 'smart'
+user = 'root'
+database = 'tracking'
 
 def count():
 	date_time = datetime.now()
@@ -17,28 +22,6 @@ def backup():
 	today = count()
 	backup_name = "backup"+today+".sql"
 
-	try:
-		with open(backup_name, 'w') as backup_file:
-			password = ''
-			user = 'root'
-			database = ''
-			
-			cmd=('mysqldump -u root -p tracking2 tbl_cars cars_status -r "%s"'%backup_name)
-
-			child = pexpect.spawn(cmd)
-			# child.logfile_read = sys.stdout.buffer
-			i = child.expect([pexpect.TIMEOUT, "Enter password:"])
-
-			if i == 0:
-				print("Got unexpected output: %s %s" % (child.before, child.after))
-				sys.exit()
-			else:
-				try:
-					child.sendline(password)
-					child.sendline('exit')
-					child.expect(pexpect.EOF)
-				except:
-					print('didnt pass password')
-
-	except:
-		print('failed to create file')
+	# with open(backup_name) as backup_file:
+	process = Popen([r'mysqldump', '-u', 'root', '-psmart', 'tracking', 'tbl_cars','cars_status'], stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'w+'), shell=True)
+	process.communicate()
