@@ -5,7 +5,11 @@ def restore(filename):
     '''Restore database from backup'''
     sql_query=str(filename)
 
+<<<<<<< HEAD
     connection = mysql.connector.connect(user='root', password='',host='127.0.0.1',database='tracking')
+=======
+    connection = mysql.connector.connect(user='root', password='smart',host='127.0.0.1',database='tracking')
+>>>>>>> dc16f00df91d7a1e4f784f68da7f6d5828e021da
     cur = connection.cursor()
     print(cur)
 
