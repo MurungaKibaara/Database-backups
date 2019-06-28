@@ -12,6 +12,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 import logging
 from create_dump import backup
 from post_dump import restore
+from delete_old_files import delete_backups
 
 # Initialize Logging
 logging.basicConfig(filename='app.log', level=logging.DEBUG)
@@ -102,6 +103,7 @@ class StartPage(tk.Frame):
             # threading.Thread(target=run_backup, daemon=True)
             scheduler = BackgroundScheduler()
             scheduler.add_job(run_backup, IntervalTrigger(seconds=120))
+            scheduler.add_job(delete_backups, IntervalTrigger(hours=48))
             scheduler.start()
 
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))
