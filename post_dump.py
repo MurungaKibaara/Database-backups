@@ -5,7 +5,7 @@ def restore(filename):
     '''Restore database from backup'''
     sql_query=str(filename)
 
-    connection = mysql.connector.connect(user='root', password='',host='127.0.0.1',database='prac4')
+    connection = mysql.connector.connect(user='root', password='',host='127.0.0.1',database='tracking')
     cur = connection.cursor()
     print(cur)
 
@@ -24,4 +24,3 @@ def restore(filename):
         connection.close()
     except:
         print('error reading file')
-        

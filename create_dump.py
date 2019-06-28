@@ -5,7 +5,7 @@ from datetime import datetime
 
 # Change environment variable to powershell on windows
 
-# os.environ['COMSPEC'] = 'powershell'
+os.environ['COMSPEC'] = 'powershell'
 
 def count():
 	date_time = datetime.now()
@@ -19,11 +19,11 @@ def backup():
 
 	try:
 		with open(backup_name, 'w') as backup_file:
-			password = ''
+			password = 'smart'
 			user = 'root'
-			database = ''
+			database = 'tracking'
 			
-			cmd=('mysqldump -u root -p tracking2 tbl_cars cars_status -r "%s"'%backup_name)
+			cmd=('mysqldump -u root -p tracking tbl_cars cars_status -r "%s"'%backup_name)
 
 			child = pexpect.spawn(cmd)
 			# child.logfile_read = sys.stdout.buffer
