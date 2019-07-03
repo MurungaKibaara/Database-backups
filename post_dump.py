@@ -1,20 +1,16 @@
 import mysql.connector
 from mysql.connector import Error
 
-def restore(filename):
+def restore(filename, database_name):
     '''Restore database from backup'''
     sql_query=str(filename)
-
-<<<<<<< HEAD
-    connection = mysql.connector.connect(user='root', password='',host='127.0.0.1',database='tracking')
-=======
-    connection = mysql.connector.connect(user='root', password='smart',host='127.0.0.1',database='tracking')
->>>>>>> dc16f00df91d7a1e4f784f68da7f6d5828e021da
-    cur = connection.cursor()
-    print(cur)
-
+    db_name = str(database_name)
 
     try:
+        connection = mysql.connector.connect(user='root', password='',host='127.0.0.1',database=db_name)
+        cur = connection.cursor()
+        print(cur)
+
         sql_file = open(sql_query)
         sql = sql_file.read()
 
@@ -26,5 +22,6 @@ def restore(filename):
             else:
                 print("Rows affected by statement '{}': '{}':".format(result.statement, result.rowcount))
         connection.close()
-    except:
-        print('error reading file')
+    except Error as error:
+        print(error)
+

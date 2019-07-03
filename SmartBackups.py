@@ -65,14 +65,25 @@ class StartPage(tk.Frame):
 
         global folder_path
 
+        def database_option_changed(*args):
+            '''Change the host on option menu change'''
+            chosen_database = database.get()
+            print(chosen_database)
+            return chosen_database
+
+        #Getting Host and port
+        database = StringVar(self)
+        database.set("tracking")
+        chosen_database = database.trace("w", database_option_changed)
+        databases = OptionMenu(self, database, "tracking","trackingtest") 
+        databases.pack()
+
         def browse_button():
             global folder_path
             folder_path = filedialog.askopenfilename(initialdir = "/home/murunga/Desktop/Database-backups",title = "Select file",filetypes = (("SQL files","*.sql"),("all files","*.*")))
             return folder_path
 
         folder_path = StringVar()
-        print(folder_path)
-        print(folder_path)
         variable_folder = Label(self, textvariable=folder_path, font=controller.title_font)
         variable_folder.pack()
 
@@ -91,8 +102,10 @@ class StartPage(tk.Frame):
             time.sleep(1)
         def run_backup():
             '''Run backup in the background'''
+            chosen_db= database_option_changed()
+            print("create in db",chosen_db)
             try:
-                threading.Thread(target=backup, daemon=True).start()
+                threading.Thread(target=backup, args=(str(chosen_db),), daemon=True).start()
             except:
                 print("Threading failed")
 
@@ -109,7 +122,9 @@ class StartPage(tk.Frame):
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))
         backup_button.pack()
 
-        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: browse_button()), (lambda: controller.show_frame("PageThree")) ,(lambda: restore(str(folder_path)))))
+        chosen_db= database_option_changed()
+
+        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: browse_button()), (lambda: database_option_changed()), (lambda: controller.show_frame("PageThree")) ,(lambda: restore(str(folder_path), str(chosen_db)))))
         Restore_button.pack()
 
 class PageOne(tk.Frame):
