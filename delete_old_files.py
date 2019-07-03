@@ -7,6 +7,7 @@ from glob import glob
 from contextlib import suppress
 
 def format():
+    '''Time format for deleting backup files'''
     time = datetime.now().strftime("%Y-%m-%d")
     return time
 
