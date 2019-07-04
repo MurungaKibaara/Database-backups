@@ -17,23 +17,23 @@ def count():
 def backup(database, user, ip, password, tables):
 	'''Backup to a *.sql file'''
 
-	for db in database:
-		for users in user:
-			for passwd in password:
-				for host in ip:
-					tbls = json.dumps(tables).strip('[]')
-					print(tbls)
+	today = count()
+	backup_name = "backup"+today+".sql"
 
-					today = count()
-					backup_name = "backup"+today+".sql"
-					try:
-						for table in tables:
-							cmd=[r'mysqldump', '-h', host, '-u', users, '-p{}'.format(passwd), '%s'%db, table]
-							print(cmd)
-							process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'a'), shell=True)
-							process.communicate()
-					except:
-						print('Mysql operation failed')
+	db = (database[0])
+	users = user[0]
+	host = ip[0]
+	passwd = password[0]
+
+	try:
+		for table in tables:
+			cmd=[r'mysqldump', '-h', host, '-u', users, '-p{}'.format(passwd), '%s'%db, table]
+			print(cmd)
+			process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'a'), shell=True)
+			process.communicate()
+	except:
+		print('Mysql operation failed')
+
 
 tables = ['cars', 'tbl_cars', 'cars_status']
 database = ['tracking']
