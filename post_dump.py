@@ -7,7 +7,7 @@ def restore(filename, database_name):
     db_name = str(database_name)
 
     try:
-        connection = mysql.connector.connect(user='root', password='',host='127.0.0.1',database=db_name)
+        connection = mysql.connector.connect(user='root', password='smart',host='127.0.0.1',database=db_name)
         cur = connection.cursor()
         print(cur)
 
