@@ -6,6 +6,7 @@ import subprocess
 from datetime import datetime
 
 def count():
+    '''Create date format to add to name string'''
 	date_time = datetime.now()
 	today = date_time.strftime("%m-%d-%Y-%H-%M-%S")
 	return today
