@@ -71,7 +71,7 @@ class StartPage(tk.Frame):
             print(chosen_database)
             return chosen_database
 
-        #Getting Host and port
+        #Getting database name
         database = StringVar(self)
         database.set("tracking")
         chosen_database = database.trace("w", database_option_changed)
@@ -204,16 +204,23 @@ class Settings(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = Label(self, text="Successfully rolled back database\n\n",
+        label = Label(self, text="Enter database information below: \n\n",
                       font=controller.title_font)
         label.pack(side="top", fill="x", padx="10", pady=10)
 
-        img = Image.open("server.gif")
-        img = img.resize((200, 150), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(img)
-        panel = Label(self, image=img)
-        panel.image = img
-        panel.pack()
+        def database_option_changed(*args):
+            '''Change the host on option menu change'''
+            chosen_database = database.get()
+            print(chosen_database)
+            return chosen_database
+
+        #Getting Host and port
+        database = StringVar(self)
+        database.set("tracking")
+        chosen_database = database.trace("w", database_option_changed)
+        databases = OptionMenu(self, database, "tracking","trackingtest") 
+        databases.pack()
+
 
         button = Button(self, text="Continue backing up data",
                         command=lambda: controller.show_frame("PageOne")).pack()
