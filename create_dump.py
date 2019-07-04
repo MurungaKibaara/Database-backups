@@ -1,6 +1,9 @@
 import pexpect
 import sys
+import json
 import os
+import re
+import argparse
 from subprocess import PIPE, call, Popen
 import subprocess
 from datetime import datetime
@@ -11,31 +14,34 @@ def count():
 	today = date_time.strftime("%m-%d-%Y-%H-%M-%S")
 	return today
 
-def backup(database, user, password, tables):
+def backup(database, user, ip, password, tables):
 	'''Backup to a *.sql file'''
-	for db in database:
-		tbls = ','.join(tables)
-		# tbls = str(tables).split("[]")
-		# print(type(tbls))
 
-		# print(db, tbls)
-		for i in range(len(tables)):
-			print(i)
-			today = count()
-			backup_name = "backup"+today+".sql"
-			try:
-				process = Popen([r'mysqldump', '-u', 'root', '-psmart', '%s'%db, '%s'%tbls], stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'w+'), shell=True)
-				process.communicate()
-			except:
-				print('Mysql operation failed')
+	for db in database:
+		for users in user:
+			for passwd in password:
+				for host in ip:
+					tbls = json.dumps(tables).strip('[]')
+					print(tbls)
+
+					today = count()
+					backup_name = "backup"+today+".sql"
+					try:
+						for table in tables:
+							cmd=[r'mysqldump', '-h', host, '-u', users, '-p{}'.format(passwd), '%s'%db, table]
+							print(cmd)
+							process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'a'), shell=True)
+							process.communicate()
+					except:
+						print('Mysql operation failed')
 
 tables = ['cars', 'tbl_cars', 'cars_status']
 database = ['tracking']
 ip = ["localhost"]
 user = ["root"]
-password = ["smart"]
+password = [""]
 
-backup(database, user, password, tables)
+backup(database, user, ip, password, tables)
 
 
 
@@ -67,3 +73,10 @@ backup(database, user, password, tables)
 # 				child.expect(pexpect.EOF)
 # 			except:
 # 				print('password not passed')
+
+# for db in database:
+# 	tbls = ','.join(tables)
+# 	# tbls = str(tables).split("[]")
+# 	print(str(tbl1))
+# 	# print(db, tbls)
+
