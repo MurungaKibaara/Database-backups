@@ -34,7 +34,7 @@ def backup(db_name):
 			print(cmd)
 
 			child = pexpect.spawn(cmd)
-			# child.logfile_read = sys.stdout.buffer
+			child.logfile_read = sys.stdout.buffer
 			i = child.expect([pexpect.TIMEOUT, "Enter password:"])
 			print(i)
 
@@ -47,7 +47,7 @@ def backup(db_name):
 					child.sendline('exit')
 					child.expect(pexpect.EOF)
 				except:
-					print('didnt pass password')
+					print('password not passed')
 
 	except:
 		print('failed to create file')

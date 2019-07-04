@@ -39,7 +39,7 @@ class SmartBackup(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, PageOne, PageTwo, PageThree):
+        for F in (StartPage, PageOne, PageTwo, PageThree, Settings):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -119,6 +119,9 @@ class StartPage(tk.Frame):
             scheduler.add_job(delete_backups, IntervalTrigger(hours=48))
             scheduler.start()
 
+        settings_button = Button(self, text="Settings", command=combine_functions((lambda: controller.show_frame("Settings")),(lambda: wait())))
+        settings_button.pack()
+
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))
         backup_button.pack()
 
@@ -173,6 +176,29 @@ class PageTwo(tk.Frame):
             self, compound=TOP, text="Yes, leave application", command=controller.destroy).pack()
 
 class PageThree(tk.Frame):
+    '''Function to quit'''
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        label = Label(self, text="Successfully rolled back database\n\n",
+                      font=controller.title_font)
+        label.pack(side="top", fill="x", padx="10", pady=10)
+
+        img = Image.open("server.gif")
+        img = img.resize((200, 150), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(img)
+        panel = Label(self, image=img)
+        panel.image = img
+        panel.pack()
+
+        button = Button(self, text="Continue backing up data",
+                        command=lambda: controller.show_frame("PageOne")).pack()
+
+        quit_button = Button(
+            self, compound=TOP, text="Yes, leave application", command=controller.destroy).pack()
+
+class Settings(tk.Frame):
     '''Function to quit'''
 
     def __init__(self, parent, controller):
