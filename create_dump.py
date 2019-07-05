@@ -6,6 +6,7 @@ import re
 import argparse
 from subprocess import PIPE, call, Popen
 import subprocess
+from registry import get_reg
 from datetime import datetime
 
 def count():
@@ -13,6 +14,20 @@ def count():
 	date_time = datetime.now()
 	today = date_time.strftime("%m-%d-%Y-%H-%M-%S")
 	return today
+
+def get_registry_values():
+	'''Get values from registry and post them in the backup function'''
+	try:
+		tables = get_reg('tables')
+		database = get_reg('database')
+		ip = get_reg('ip/host')
+		user = get_reg('user')
+		password = get_reg('password')
+
+		return backup(database, user, ip, password, tables)
+	except:
+		print("No values found in registry")
+
 
 def backup(database, user, ip, password, tables):
 	'''Backup to a *.sql file'''
@@ -24,31 +39,20 @@ def backup(database, user, ip, password, tables):
 	users = user[0]
 	host = ip[0]
 	passwd = password[0]
-
 	try:
 		for table in tables:
 			cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db, table]
-			print(cmd)
 			process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'a'), shell=True)
 			process.communicate()
 	except:
 		print('Mysql operation failed')
 
-
-tables = ['cars', 'tbl_cars', 'cars_status']
-database = ['tracking']
-ip = ["localhost"]
-user = ["root"]
-password = ["smart"]
-
-backup(database, user, ip, password, tables)
+get_registry_values()
 
 
-
-
-
-
-
+# --------------------------------------------------------------------------------------------------
+# For linux systems
+# --------------------------------------------------------------------------------------------------
 # with open(backup_name, 'w') as backup_file:
 # 		password = ''
 # 		user = 'root'
@@ -73,10 +77,3 @@ backup(database, user, ip, password, tables)
 # 				child.expect(pexpect.EOF)
 # 			except:
 # 				print('password not passed')
-
-# for db in database:
-# 	tbls = ','.join(tables)
-# 	# tbls = str(tables).split("[]")
-# 	print(str(tbl1))
-# 	# print(db, tbls)
-
