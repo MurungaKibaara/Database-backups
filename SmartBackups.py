@@ -40,7 +40,7 @@ class SmartBackup(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, PageOne, PageTwo, PageThree, Settings):
+        for F in (StartPage, PageOne, PageTwo, PageThree, Settings, SuccessPage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -104,17 +104,24 @@ class StartPage(tk.Frame):
             scheduler.add_job(delete_backups, IntervalTrigger(hours=48))
             scheduler.start()
 
-        settings_button = Button(self, text="Settings", command=combine_functions((lambda: controller.show_frame("Settings")),(lambda: wait())))
-        settings_button.pack()
-
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))
         backup_button.pack()
 
         chosen_db = get_reg('database')
-        database = chosen_db[0]
+        if len(chosen_db) != 0:
+            database = chosen_db[0]
+        else:
+            database='tracking'
 
         Restore_button = Button(self, text="Restore", command=combine_functions((lambda: browse_button()), (lambda: controller.show_frame("PageThree")) ,(lambda: restore(str(folder_path), str(database)))))
         Restore_button.pack()
+
+        label = Label(self,font=controller.title_font)
+        label.pack(side="top", fill="x", padx="25", pady=25)
+
+        settings_button = Button(self, text="Settings", command=combine_functions((lambda: controller.show_frame("Settings")),(lambda: wait())))
+        settings_button.pack()
+
 
 class PageOne(tk.Frame):
     '''Monitoring occurs on this page'''
@@ -182,7 +189,7 @@ class PageThree(tk.Frame):
                         command=lambda: controller.show_frame("PageOne")).pack()
 
         quit_button = Button(
-            self, compound=TOP, text="Yes, leave application", command=controller.destroy).pack()
+            self, compound=TOP, text="Quit application", command=controller.destroy).pack()
 
 class Settings(tk.Frame):
     '''Function to quit'''
@@ -193,6 +200,15 @@ class Settings(tk.Frame):
         label = Label(self, text="Enter database information below: \n\n",
                       font=controller.title_font)
         label.pack(side="top", fill="x", padx="10", pady=10)
+
+        def combine_functions(*functions):
+            '''Combine two functions'''
+            def combined_functions(*args, **kwargs):
+                '''Combined functions'''
+                for function in functions:
+                    function(*args, **kwargs)
+                return function
+            return combined_functions
 
 
         # Getting Database
@@ -206,6 +222,17 @@ class Settings(tk.Frame):
 
         databaseentry = Entry(self)
         databaseentry.pack()
+        # Get database Tables
+        def get_tables():
+            '''Get tables'''
+            tables = tablesentry.get()
+            return tables
+
+        databaselabel=Label(self, text="Enter tables(separate using single space if many): ")
+        databaselabel.pack(side="top", fill="x", padx="20", pady=10)
+
+        tablesentry = Entry(self)
+        tablesentry.pack()
 
         # Getting database user
         def get_user():
@@ -249,6 +276,16 @@ class Settings(tk.Frame):
             db = get_database()
             database = [db]
 
+            def convert():
+                '''Convert string of tables into a list'''
+                tables = get_tables()
+                tbls=str(tables).split(' ')
+
+                return (tbls)
+
+            tbls = convert()
+            print(tbls)
+
             host = get_host()
             host = [host]
 
@@ -258,19 +295,36 @@ class Settings(tk.Frame):
             password = get_password()
             password = [password]
 
-            return set_reg('database', database), set_reg('user', user), set_reg('ip/host', host), set_reg('password', password)
+            return set_reg('database', database), set_reg('tables', tbls), set_reg('user', user), set_reg('ip/host', host), set_reg('password', password)
         
         savinglabel=Label(self)
         savinglabel.pack(side="top", fill="x", padx="20", pady=10)
         save_button = Button(self, text="Save new settings",
-                        command=lambda: set_registry_data()).pack()
+                        command=combine_functions((lambda: controller.show_frame("SuccessPage")), (lambda: set_registry_data()))).pack()
         
         spacinglabel=Label(self)
         spacinglabel.pack(side="top", fill="x", padx="30", pady=30)
 
 
-        button = Button(self, text="Start Backing up data",
+        button = Button(self, text="Start Backing up data", 
                         command=lambda: controller.show_frame("StartPage")).pack()
+        quit_button = Button(
+            self, compound=TOP, text="Quit application", command=controller.destroy).pack()
+
+class SuccessPage(tk.Frame):
+    '''Function to quit'''
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        label = Label(self, text="Successfully accepted new settings\n\n",
+                      font=controller.title_font)
+        label.pack(side="top", fill="x", padx="30", pady=30)
+
+        
+        button = Button(self, text="Go to backing up data",
+                        command=lambda: controller.show_frame("PageOne")).pack()
+
         quit_button = Button(
             self, compound=TOP, text="Quit application", command=controller.destroy).pack()
 
