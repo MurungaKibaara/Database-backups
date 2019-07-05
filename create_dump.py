@@ -42,7 +42,6 @@ def backup(database, user, ip, password, tables):
 	except:
 		print('Mysql operation failed')
 
-get_registry_values()
 
 
 # --------------------------------------------------------------------------------------------------
