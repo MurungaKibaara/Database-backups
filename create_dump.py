@@ -1,11 +1,6 @@
 import pexpect
 import sys
-import json
-import os
-import re
-import argparse
 from subprocess import PIPE, call, Popen
-import subprocess
 from registry import get_reg
 from datetime import datetime
 
