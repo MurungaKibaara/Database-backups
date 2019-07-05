@@ -12,7 +12,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 import logging
 from create_dump import get_registry_values
 from post_dump import restore
-from registry import get_reg
+from registry import get_reg, set_reg
 from delete_old_files import delete_backups
 
 # Initialize Logging
@@ -194,26 +194,85 @@ class Settings(tk.Frame):
                       font=controller.title_font)
         label.pack(side="top", fill="x", padx="10", pady=10)
 
-        def database_option_changed(*args):
-            '''Change the host on option menu change'''
-            chosen_database = database.get()
-            print(chosen_database)
-            return chosen_database
 
-        #Getting Host and port
-        database = StringVar(self)
-        database.set("tracking")
-        chosen_database = database.trace("w", database_option_changed)
-        databases = OptionMenu(self, database, "tracking","trackingtest") 
-        databases.pack()
+        # Getting Database
+        def get_database():
+            '''Get database value'''
+            database = databaseentry.get()
+            return database
+
+        databaselabel=Label(self, text="Enter database name: ")
+        databaselabel.pack(side="top", fill="x", padx="20", pady=10)
+
+        databaseentry = Entry(self)
+        databaseentry.pack()
+
+        # Getting database user
+        def get_user():
+            '''Get user name value'''
+            user = userentry.get()
+            return user
+
+        userlabel=Label(self, text="Enter user name: ")
+        userlabel.pack(side="top", fill="x", padx="20", pady=10)
+
+        userentry = Entry(self)
+        userentry.pack()
+
+        # Getting database host
+        def get_host():
+            '''Get host/ip value'''
+            host = hostentry.get()
+            return host
+
+        hostlabel=Label(self, text="Enter host/IP address")
+        hostlabel.pack(side="top", fill="x", padx="20", pady=10)
+
+        hostentry = Entry(self)
+        hostentry.pack()
+
+        # Getting database password
+        def get_password():
+            '''Get password value'''
+            password = passwordentry.get()
+            return password
+
+        passwordlabel=Label(self, text="Enter password")
+        passwordlabel.pack(side="top", fill="x", padx="20", pady=10)
+
+        passwordentry = Entry(self, show="*")
+        passwordentry.pack()
+
+        # Save data to Registry
+        def set_registry_data():
+            '''Set settings values to registry'''
+            db = get_database()
+            database = [db]
+
+            host = get_host()
+            host = [host]
+
+            user = get_user()
+            user = [user]
+
+            password = get_password()
+            password = [password]
+
+            return set_reg('database', database), set_reg('user', user), set_reg('ip/host', host), set_reg('password', password)
+        
+        savinglabel=Label(self)
+        savinglabel.pack(side="top", fill="x", padx="20", pady=10)
+        save_button = Button(self, text="Save new settings",
+                        command=lambda: set_registry_data()).pack()
+        
+        spacinglabel=Label(self)
+        spacinglabel.pack(side="top", fill="x", padx="30", pady=30)
 
 
-
-        button = Button(self, text="Continue backing up data",
-                        command=lambda: controller.show_frame("PageOne")).pack()
-
+        button = Button(self, text="Start Backing up data",
+                        command=lambda: controller.show_frame("StartPage")).pack()
         quit_button = Button(
-            self, compound=TOP, text="Yes, leave application", command=controller.destroy).pack()
+            self, compound=TOP, text="Quit application", command=controller.destroy).pack()
 
 
 if __name__ == "__main__":
