@@ -10,8 +10,9 @@ import threading
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 import logging
-from create_dump import backup
+from create_dump import get_registry_values
 from post_dump import restore
+from registry import get_reg
 from delete_old_files import delete_backups
 
 # Initialize Logging
@@ -65,19 +66,6 @@ class StartPage(tk.Frame):
 
         global folder_path
 
-        def database_option_changed(*args):
-            '''Change the host on option menu change'''
-            chosen_database = database.get()
-            print(chosen_database)
-            return chosen_database
-
-        #Getting database name
-        database = StringVar(self)
-        database.set("tracking")
-        chosen_database = database.trace("w", database_option_changed)
-        databases = OptionMenu(self, database, "tracking","trackingtest") 
-        databases.pack()
-
         def browse_button():
             global folder_path
             folder_path = filedialog.askopenfilename(initialdir = "/home/murunga/Desktop/Database-backups",title = "Select file",filetypes = (("SQL files","*.sql"),("all files","*.*")))
@@ -102,13 +90,10 @@ class StartPage(tk.Frame):
             time.sleep(1)
         def run_backup():
             '''Run backup in the background'''
-            chosen_db= database_option_changed()
-            print("create in db",chosen_db)
             try:
-                threading.Thread(target=backup, args=(str(chosen_db),), daemon=True).start()
+                threading.Thread(target=get_registry_values, daemon=True).start()
             except:
                 print("Threading failed")
-
 
         # Scheduling function
         def schedule():
@@ -125,9 +110,10 @@ class StartPage(tk.Frame):
         backup_button = Button(self, text="Backup", command=combine_functions((lambda: controller.show_frame("PageOne")),(lambda: wait()) ,(lambda: run_backup()), (lambda: schedule())))
         backup_button.pack()
 
-        chosen_db= database_option_changed()
+        chosen_db = get_reg('database')
+        database = chosen_db[0]
 
-        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: browse_button()), (lambda: database_option_changed()), (lambda: controller.show_frame("PageThree")) ,(lambda: restore(str(folder_path), str(chosen_db)))))
+        Restore_button = Button(self, text="Restore", command=combine_functions((lambda: browse_button()), (lambda: controller.show_frame("PageThree")) ,(lambda: restore(str(folder_path), str(database)))))
         Restore_button.pack()
 
 class PageOne(tk.Frame):
@@ -220,6 +206,8 @@ class Settings(tk.Frame):
         chosen_database = database.trace("w", database_option_changed)
         databases = OptionMenu(self, database, "tracking","trackingtest") 
         databases.pack()
+
+
 
         button = Button(self, text="Continue backing up data",
                         command=lambda: controller.show_frame("PageOne")).pack()
