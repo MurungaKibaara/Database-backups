@@ -19,8 +19,8 @@ def restore(filename, database_name):
                 if result.with_rows:
                     print("Rows produced by statement: '{}':".format(result.statement))
                     result.fetchall()
-                # else:
-                    # print("Rows affected by statement '{}': '{}':".format(result.statement, result.rowcount))
+                else:
+                    print("Rows affected by statement '{}': '{}':".format(result.statement, result.rowcount))
             connection.close()
         except RuntimeError:
             return
