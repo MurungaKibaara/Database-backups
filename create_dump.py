@@ -38,7 +38,7 @@ def backup(database, user, ip, password, tables):
 
 	try:
 		for table in tables:
-			cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db, table]
+			cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db]
 			process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'a'), shell=True)
 			process.communicate()
 			process.kill()
