@@ -3,7 +3,7 @@ import sys
 from subprocess import PIPE, call, Popen
 from registry import get_reg
 from datetime import datetime
-from post_dump import post_db_to_local
+from post_dump import update_local_database
 
 def count():
 	'''Create date format to add to name string'''
@@ -35,6 +35,7 @@ def backup(database, user, ip, password, tables):
 	users = user[0]
 	host = ip[0]
 	passwd = password[0]
+
 	try:
 		for table in tables:
 			cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db, table]
@@ -62,6 +63,11 @@ def backup_entire_database(database):
 	except Exception as e:
 		print("Entire database: mysql operation failed")
 		print(str(e))
+	
+	try:
+		update_local_database()
+	except Exception as e:
+		print('An error occured: ', str(e))
 
 
 
