@@ -3,6 +3,7 @@ import sys
 from subprocess import PIPE, call, Popen
 from registry import get_reg
 from datetime import datetime
+from post_dump import post_db_to_local
 
 def count():
 	'''Create date format to add to name string'''
@@ -19,7 +20,7 @@ def get_registry_values():
 		user = get_reg('user')
 		password = get_reg('password')
 
-		return backup(database, user, ip, password, tables)
+		return backup(database, user, ip, password, tables), backup_entire_database(database)
 	except:
 		print("No values found in registry")
 
@@ -39,8 +40,29 @@ def backup(database, user, ip, password, tables):
 			cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db, table]
 			process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'a'), shell=True)
 			process.communicate()
-	except:
-		print('Mysql operation failed')
+			process.kill()
+
+	except Exception as e:
+		print('Particular Tables: Mysql operation failed')
+		print(str(e))
+
+def backup_entire_database(database):
+	'''Backup the entire database'''
+
+	db = (database[0])
+
+	backup_name='192-168-1-4-mysql_database.sql'
+
+	try:
+		cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db, table]
+		process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'w+'), shell=True)
+		process.communicate()
+		process.kill()
+
+	except Exception as e:
+		print("Entire database: mysql operation failed")
+		print(str(e))
+
 
 
 
