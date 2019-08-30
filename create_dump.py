@@ -38,7 +38,7 @@ def backup(database, user, ip, password, tables):
 
 	try:
 		for table in tables:
-			cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db]
+			cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db, table]
 			process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'a'), shell=True)
 			process.communicate()
 			process.kill()
@@ -55,7 +55,7 @@ def backup_entire_database(database):
 	backup_name='192-168-1-4-mysql_database.sql'
 
 	try:
-		cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db, table]
+		cmd=[r'mysqldump', '-h', host, '-u', users, '-p%s'%passwd, '%s'%db]
 		process = Popen(cmd, stdin=PIPE, stderr=PIPE, stdout=open(backup_name, 'w+'), shell=True)
 		process.communicate()
 		process.kill()
@@ -68,7 +68,6 @@ def backup_entire_database(database):
 		update_local_database()
 	except Exception as e:
 		print('An error occured: ', str(e))
-
 
 
 
