@@ -153,7 +153,7 @@ class PageOne(tk.Frame):
 
 # User interface to quit program
 class PageTwo(tk.Frame):
-    '''Function to quit'''
+    '''Function to quit application'''
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -169,7 +169,7 @@ class PageTwo(tk.Frame):
             self, compound=TOP, text="Yes, leave application", command=controller.destroy).pack()
 
 class PageThree(tk.Frame):
-    '''Function to quit'''
+    '''Function to roll back database and quit'''
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -192,7 +192,7 @@ class PageThree(tk.Frame):
             self, compound=TOP, text="Quit application", command=controller.destroy).pack()
 
 class Settings(tk.Frame):
-    '''Function to quit'''
+    '''Function to get user data and post to registry'''
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
